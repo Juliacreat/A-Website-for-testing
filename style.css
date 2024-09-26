@@ -8,13 +8,13 @@ header {
     text-align: center;
     padding: 20px;
     background-color: #b5e2fa;
-    color: white;
+    color: black;
 }
 
 section {
     margin: 20px 0;
     padding: 20px;
-    background-color: white;
+    background-color: #F0F8FF;
     border: 1px solid #ccc;
     border-radius: 8px;
 }
