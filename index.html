@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Christmas Symbol Converter | 聖誕符號轉換器</title>
+    <title>Christmas Symbol Cipher | 聖誕符號加密器</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,7 +32,7 @@
         .output {
             margin-top: 20px;
             font-size: 24px;
-            white-space: pre-wrap; /* 確保空白可以正常顯示 */
+            white-space: pre-wrap;
         }
         .lang-switch {
             margin-bottom: 20px;
@@ -40,15 +40,11 @@
     </style>
 </head>
 <body>
-    <div class="lang-switch">
-        <button onclick="switchLanguage('en')">English</button>
-        <button onclick="switchLanguage('zh')">中文</button>
-    </div>
-    <h1 id="title">Christmas Symbol Converter</h1>
-    <p id="description">Enter text (A-Z, 0-9) and see it transform into Christmas symbols!</p>
-    <input type="text" id="inputText" placeholder="Enter text here / 輸入文字">
-    <button onclick="convertToSymbols()">Convert / 轉換</button>
-    <button onclick="convertToText()">Revert / 還原</button>
+    <h1>Christmas Symbol Cipher</h1>
+    <p>Enter text (A-Z, 0-9) to encrypt or decrypt using Christmas symbols!</p>
+    <input type="text" id="inputText" placeholder="Enter text to encrypt/decrypt">
+    <button onclick="encryptToSymbols()">Encrypt to Symbols</button>
+    <button onclick="decryptFromSymbols()">Decrypt from Symbols</button>
     <div class="output" id="output"></div>
 
     <script>
@@ -69,53 +65,41 @@
             Object.entries(charToSymbol).map(([key, value]) => [value, key])
         );
 
-        // 語言資料
-        const languages = {
-            en: {
-                title: "Christmas Symbol Converter",
-                description: "Enter text (A-Z, 0-9) and see it transform into Christmas symbols!",
-                placeholder: "Enter text here",
-                buttonConvert: "Convert",
-                buttonRevert: "Revert"
-            },
-            zh: {
-                title: "聖誕符號轉換器",
-                description: "輸入文字（A-Z, 0-9），看看它變成聖誕符號！",
-                placeholder: "輸入文字",
-                buttonConvert: "轉換",
-                buttonRevert: "還原"
-            }
-        };
-
-        // 預設語言
-        let currentLanguage = 'en';
-
-        // 語言切換函數
-        function switchLanguage(lang) {
-            currentLanguage = lang;
-            document.getElementById('title').textContent = languages[lang].title;
-            document.getElementById('description').textContent = languages[lang].description;
-            document.getElementById('inputText').placeholder = languages[lang].placeholder;
-            document.querySelector('button[onclick="convertToSymbols()"]').textContent = languages[lang].buttonConvert;
-            document.querySelector('button[onclick="convertToText()"]').textContent = languages[lang].buttonRevert;
-        }
-
-        // 符號轉換函數
-        function convertToSymbols() {
+        // 凱薩加密（符號輸出）
+        function encryptToSymbols() {
             const input = document.getElementById('inputText').value.toUpperCase();
             let result = '';
             for (const char of input) {
-                result += charToSymbol[char] || char; // 如果無對應圖案，保留原字符
+                if (/[A-Z]/.test(char)) {
+                    const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 + 1) % 26 + 65); // 下移一個字母
+                    result += charToSymbol[shiftedChar];
+                } else if (/[0-9]/.test(char)) {
+                    const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 + 1) % 10 + 48); // 下移一個數字
+                    result += charToSymbol[shiftedChar];
+                } else if (char === ' ') {
+                    result += ' '; // 保留空白
+                } else {
+                    result += char; // 其他字符保留原樣
+                }
             }
             document.getElementById('output').textContent = result;
         }
 
-        // 還原轉換函數
-        function convertToText() {
+        // 解密符號
+        function decryptFromSymbols() {
             const input = document.getElementById('inputText').value;
             let result = '';
             for (const symbol of input) {
-                result += symbolToChar[symbol] || symbol; // 如果無對應字符，保留原符號
+                const char = symbolToChar[symbol];
+                if (/[A-Z]/.test(char)) {
+                    result += String.fromCharCode((char.charCodeAt(0) - 65 - 1 + 26) % 26 + 65); // 上移一個字母
+                } else if (/[0-9]/.test(char)) {
+                    result += String.fromCharCode((char.charCodeAt(0) - 48 - 1 + 10) % 10 + 48); // 上移一個數字
+                } else if (symbol === ' ') {
+                    result += ' '; // 保留空白
+                } else {
+                    result += symbol; // 其他符號保留原樣
+                }
             }
             document.getElementById('output').textContent = result;
         }
