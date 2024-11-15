@@ -11,18 +11,19 @@
             padding: 20px;
             background-color: #f7f7f7;
         }
-        table {
-            margin: 0 auto;
-            border-collapse: collapse;
-            margin-bottom: 20px;
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 600px;
         }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px 12px;
-            text-align: center;
-        }
-        th {
+        .grid-item {
+            padding: 10px;
             background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 18px;
         }
         input {
             padding: 10px;
@@ -54,15 +55,7 @@
     <p>Enter text (A-Z, 0-9) to encrypt or decrypt using Christmas symbols!</p>
 
     <h2>Character-to-Symbol Mapping</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Character</th>
-                <th>Symbol</th>
-            </tr>
-        </thead>
-        <tbody id="mappingTable"></tbody>
-    </table>
+    <div class="grid-container" id="mappingGrid"></div>
 
     <input type="text" id="inputText" placeholder="Enter text to encrypt/decrypt">
     <button onclick="encryptToSymbols()">Encrypt to Symbols</button>
@@ -87,19 +80,20 @@
             Object.entries(charToSymbol).map(([key, value]) => [value, key])
         );
 
-        // 显示对照表
-        const mappingTable = document.getElementById('mappingTable');
+        // 显示对照表为正方形网格
+        const mappingGrid = document.getElementById('mappingGrid');
         Object.entries(charToSymbol).forEach(([char, symbol]) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${char}</td><td>${symbol}</td>`;
-            mappingTable.appendChild(row);
+            const item = document.createElement('div');
+            item.className = 'grid-item';
+            item.textContent = `${char} → ${symbol}`;
+            mappingGrid.appendChild(item);
         });
 
         // 凯撒加密（符号输出）
         function encryptToSymbols() {
             const input = document.getElementById('inputText').value.toUpperCase();
             let result = '';
-            let detailedResult = 'Encryption Process:\n'; // 详细过程
+            let detailedResult = 'Encryption Process:\n';
 
             for (const char of input) {
                 if (/[A-Z]/.test(char)) {
@@ -126,9 +120,11 @@
         function decryptFromSymbols() {
             const input = document.getElementById('inputText').value;
             let result = '';
-            let detailedResult = 'Decryption Process:\n'; // 详细过程
+            let detailedResult = 'Decryption Process:\n';
 
-            for (const symbol of input) {
+            // 修正解码逻辑以处理多字符符号
+            const symbols = Array.from(input); // 逐字符解析（支持多字符符号）
+            for (const symbol of symbols) {
                 if (symbolToChar[symbol]) {
                     const char = symbolToChar[symbol];
                     if (/[A-Z]/.test(char)) {
