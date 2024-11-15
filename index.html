@@ -15,6 +15,7 @@
             padding: 10px;
             font-size: 16px;
             margin: 10px 0;
+            width: 80%;
         }
         button {
             padding: 10px 20px;
@@ -23,6 +24,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            margin: 5px;
         }
         button:hover {
             background-color: #218838;
@@ -30,6 +32,7 @@
         .output {
             margin-top: 20px;
             font-size: 24px;
+            white-space: pre-wrap; /* 確保空白可以正常顯示 */
         }
         .lang-switch {
             margin-bottom: 20px;
@@ -45,6 +48,7 @@
     <p id="description">Enter text (A-Z, 0-9) and see it transform into Christmas symbols!</p>
     <input type="text" id="inputText" placeholder="Enter text here / 輸入文字">
     <button onclick="convertToSymbols()">Convert / 轉換</button>
+    <button onclick="convertToText()">Revert / 還原</button>
     <div class="output" id="output"></div>
 
     <script>
@@ -57,8 +61,13 @@
             'U': '🛷', 'V': '⛸️', 'W': '⛄', 'X': '🧦', 'Y': '🎠',
             'Z': '⛪', '0': '🎐', '1': '🌌', '2': '🕊️', '3': '🍷',
             '4': '🥂', '5': '🎶', '6': '📯', '7': '🔖', '8': '📜',
-            '9': '🧸'
+            '9': '🧸', ' ': ' ' // 空白直接對應為空白
         };
+
+        // 建立符號反向對照表
+        const symbolToChar = Object.fromEntries(
+            Object.entries(charToSymbol).map(([key, value]) => [value, key])
+        );
 
         // 語言資料
         const languages = {
@@ -66,13 +75,15 @@
                 title: "Christmas Symbol Converter",
                 description: "Enter text (A-Z, 0-9) and see it transform into Christmas symbols!",
                 placeholder: "Enter text here",
-                button: "Convert"
+                buttonConvert: "Convert",
+                buttonRevert: "Revert"
             },
             zh: {
                 title: "聖誕符號轉換器",
                 description: "輸入文字（A-Z, 0-9），看看它變成聖誕符號！",
                 placeholder: "輸入文字",
-                button: "轉換"
+                buttonConvert: "轉換",
+                buttonRevert: "還原"
             }
         };
 
@@ -85,7 +96,8 @@
             document.getElementById('title').textContent = languages[lang].title;
             document.getElementById('description').textContent = languages[lang].description;
             document.getElementById('inputText').placeholder = languages[lang].placeholder;
-            document.querySelector('button[onclick="convertToSymbols()"]').textContent = languages[lang].button;
+            document.querySelector('button[onclick="convertToSymbols()"]').textContent = languages[lang].buttonConvert;
+            document.querySelector('button[onclick="convertToText()"]').textContent = languages[lang].buttonRevert;
         }
 
         // 符號轉換函數
@@ -95,7 +107,17 @@
             for (const char of input) {
                 result += charToSymbol[char] || char; // 如果無對應圖案，保留原字符
             }
-            document.getElementById('output').innerHTML = result;
+            document.getElementById('output').textContent = result;
+        }
+
+        // 還原轉換函數
+        function convertToText() {
+            const input = document.getElementById('inputText').value;
+            let result = '';
+            for (const symbol of input) {
+                result += symbolToChar[symbol] || symbol; // 如果無對應字符，保留原符號
+            }
+            document.getElementById('output').textContent = result;
         }
     </script>
 </body>
