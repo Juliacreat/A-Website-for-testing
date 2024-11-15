@@ -1,32 +1,66 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小程式專案接案</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Christmas Symbol Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>大家好！這裡是我的程式專案接收本營~ </h1>
-    </header>
-    <section id="contact-info">
-        <h2>相關資訊</h2>
-        <p>程式: 小型程式架設、小型基礎程式教學。(Python、C++等等)</p>
-        <p>如何聯繫: 填下方相關資訊以及需求，謝謝！!</p>
-    </section>
-    <section id="contact-form">
-        <h2>聯繫我</h2>
-            <form action="https://formspree.io/f/myzgryzr" method="POST">
-                <label for="name">姓名:</label>
-                <input type="text" id="name" name="name" required><br>
-                <label for="email">電子郵件:</label>
-                <input type="email" id="email" name="email" required><br>
-                <label for="message">需求:</label>
-                <textarea id="message" name="message" rows="4" required></textarea><br>
-                <button type="submit">提交</button>
-            </form>
-    </section>
-    <script src="script.js"></script>
+    <h1>Christmas Symbol Converter</h1>
+    <p>Enter text (A-Z, 0-9) and see it transform into Christmas symbols!</p>
+    <input type="text" id="inputText" placeholder="Enter text here">
+    <button onclick="convertToSymbols()">Convert</button>
+    <div class="output" id="output"></div>
+
+    <script>
+        // 對照表
+        const charToSymbol = {
+            'A': '🎄', 'B': '🎅', 'C': '🤶', 'D': '☃️', 'E': '❄️',
+            'F': '🎁', 'G': '🦌', 'H': '🍪', 'I': '🥛', 'J': '🕯️',
+            'K': '🔔', 'L': '✨', 'M': '🌟', 'N': '🍭', 'O': '🎀',
+            'P': '🎍', 'Q': '🌲', 'R': '❇️', 'S': '🔆', 'T': '🎉',
+            'U': '🪅', 'V': '🛷', 'W': '⛄', 'X': '🧦', 'Y': '🎠',
+            'Z': '⛪', '0': '🎐', '1': '🌌', '2': '🕊️', '3': '🍷',
+            '4': '🥂', '5': '🎶', '6': '📯', '7': '🔖', '8': '📜',
+            '9': '🧸'
+        };
+
+        function convertToSymbols() {
+            const input = document.getElementById('inputText').value.toUpperCase();
+            let result = '';
+            for (const char of input) {
+                result += charToSymbol[char] || char; // 如果無對應圖案，保留原字符
+            }
+            document.getElementById('output').innerHTML = result;
+        }
+    </script>
 </body>
 </html>
