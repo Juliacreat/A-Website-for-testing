@@ -34,9 +34,6 @@
             font-size: 24px;
             white-space: pre-wrap;
         }
-        .lang-switch {
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 <body>
@@ -48,7 +45,7 @@
     <div class="output" id="output"></div>
 
     <script>
-        // 對照表
+        // 对照表
         const charToSymbol = {
             'A': '🎄', 'B': '🎅', 'C': '🤶', 'D': '☃️', 'E': '❄️',
             'F': '🎁', 'G': '🦌', 'H': '🍪', 'I': '🥛', 'J': '🕯️',
@@ -57,48 +54,52 @@
             'U': '🛷', 'V': '⛸️', 'W': '⛄', 'X': '🧦', 'Y': '🎠',
             'Z': '⛪', '0': '🎐', '1': '🌌', '2': '🕊️', '3': '🍷',
             '4': '🥂', '5': '🎶', '6': '📯', '7': '🔖', '8': '📜',
-            '9': '🧸', ' ': ' ' // 空白直接對應為空白
+            '9': '🧸', ' ': ' ' // 空白直接对映为空白
         };
 
-        // 建立符號反向對照表
+        // 建立符号反向对照表
         const symbolToChar = Object.fromEntries(
             Object.entries(charToSymbol).map(([key, value]) => [value, key])
         );
 
-        // 凱薩加密（符號輸出）
+        // 凯撒加密（符号输出）
         function encryptToSymbols() {
             const input = document.getElementById('inputText').value.toUpperCase();
             let result = '';
             for (const char of input) {
                 if (/[A-Z]/.test(char)) {
-                    const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 + 1) % 26 + 65); // 下移一個字母
+                    const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 + 1) % 26 + 65); // 下移一个字母
                     result += charToSymbol[shiftedChar];
                 } else if (/[0-9]/.test(char)) {
-                    const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 + 1) % 10 + 48); // 下移一個數字
+                    const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 + 1) % 10 + 48); // 下移一个数字
                     result += charToSymbol[shiftedChar];
                 } else if (char === ' ') {
                     result += ' '; // 保留空白
                 } else {
-                    result += char; // 其他字符保留原樣
+                    result += char; // 其他字符保留原样
                 }
             }
             document.getElementById('output').textContent = result;
         }
 
-        // 解密符號
+        // 解密符号
         function decryptFromSymbols() {
             const input = document.getElementById('inputText').value;
             let result = '';
             for (const symbol of input) {
-                const char = symbolToChar[symbol];
-                if (/[A-Z]/.test(char)) {
-                    result += String.fromCharCode((char.charCodeAt(0) - 65 - 1 + 26) % 26 + 65); // 上移一個字母
-                } else if (/[0-9]/.test(char)) {
-                    result += String.fromCharCode((char.charCodeAt(0) - 48 - 1 + 10) % 10 + 48); // 上移一個數字
+                if (symbolToChar[symbol]) {
+                    const char = symbolToChar[symbol];
+                    if (/[A-Z]/.test(char)) {
+                        result += String.fromCharCode((char.charCodeAt(0) - 65 - 1 + 26) % 26 + 65); // 上移一个字母
+                    } else if (/[0-9]/.test(char)) {
+                        result += String.fromCharCode((char.charCodeAt(0) - 48 - 1 + 10) % 10 + 48); // 上移一个数字
+                    } else {
+                        result += char; // 特殊符号直接添加
+                    }
                 } else if (symbol === ' ') {
                     result += ' '; // 保留空白
                 } else {
-                    result += symbol; // 其他符號保留原樣
+                    result += symbol; // 未定义符号保留原样
                 }
             }
             document.getElementById('output').textContent = result;
