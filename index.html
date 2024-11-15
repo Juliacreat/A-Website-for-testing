@@ -11,6 +11,19 @@
             padding: 20px;
             background-color: #f7f7f7;
         }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
         input {
             padding: 10px;
             font-size: 16px;
@@ -39,6 +52,18 @@
 <body>
     <h1>Christmas Symbol Cipher</h1>
     <p>Enter text (A-Z, 0-9) to encrypt or decrypt using Christmas symbols!</p>
+
+    <h2>Character-to-Symbol Mapping</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Character</th>
+                <th>Symbol</th>
+            </tr>
+        </thead>
+        <tbody id="mappingTable"></tbody>
+    </table>
+
     <input type="text" id="inputText" placeholder="Enter text to encrypt/decrypt">
     <button onclick="encryptToSymbols()">Encrypt to Symbols</button>
     <button onclick="decryptFromSymbols()">Decrypt from Symbols</button>
@@ -62,47 +87,72 @@
             Object.entries(charToSymbol).map(([key, value]) => [value, key])
         );
 
+        // 显示对照表
+        const mappingTable = document.getElementById('mappingTable');
+        Object.entries(charToSymbol).forEach(([char, symbol]) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${char}</td><td>${symbol}</td>`;
+            mappingTable.appendChild(row);
+        });
+
         // 凯撒加密（符号输出）
         function encryptToSymbols() {
             const input = document.getElementById('inputText').value.toUpperCase();
             let result = '';
+            let detailedResult = 'Encryption Process:\n'; // 详细过程
+
             for (const char of input) {
                 if (/[A-Z]/.test(char)) {
                     const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 + 1) % 26 + 65); // 下移一个字母
+                    detailedResult += `${char} → ${shiftedChar} → ${charToSymbol[shiftedChar]}\n`;
                     result += charToSymbol[shiftedChar];
                 } else if (/[0-9]/.test(char)) {
                     const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 + 1) % 10 + 48); // 下移一个数字
+                    detailedResult += `${char} → ${shiftedChar} → ${charToSymbol[shiftedChar]}\n`;
                     result += charToSymbol[shiftedChar];
                 } else if (char === ' ') {
+                    detailedResult += `Space → Space → Space\n`;
                     result += ' '; // 保留空白
                 } else {
+                    detailedResult += `${char} → Not Encrypted\n`;
                     result += char; // 其他字符保留原样
                 }
             }
-            document.getElementById('output').textContent = result;
+
+            document.getElementById('output').textContent = detailedResult + '\nResult: ' + result;
         }
 
         // 解密符号
         function decryptFromSymbols() {
             const input = document.getElementById('inputText').value;
             let result = '';
+            let detailedResult = 'Decryption Process:\n'; // 详细过程
+
             for (const symbol of input) {
                 if (symbolToChar[symbol]) {
                     const char = symbolToChar[symbol];
                     if (/[A-Z]/.test(char)) {
-                        result += String.fromCharCode((char.charCodeAt(0) - 65 - 1 + 26) % 26 + 65); // 上移一个字母
+                        const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 - 1 + 26) % 26 + 65); // 上移一个字母
+                        detailedResult += `${symbol} → ${char} → ${shiftedChar}\n`;
+                        result += shiftedChar;
                     } else if (/[0-9]/.test(char)) {
-                        result += String.fromCharCode((char.charCodeAt(0) - 48 - 1 + 10) % 10 + 48); // 上移一个数字
+                        const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 - 1 + 10) % 10 + 48); // 上移一个数字
+                        detailedResult += `${symbol} → ${char} → ${shiftedChar}\n`;
+                        result += shiftedChar;
                     } else {
+                        detailedResult += `${symbol} → Not Decrypted\n`;
                         result += char; // 特殊符号直接添加
                     }
                 } else if (symbol === ' ') {
+                    detailedResult += `Space → Space → Space\n`;
                     result += ' '; // 保留空白
                 } else {
+                    detailedResult += `${symbol} → Not Encrypted\n`;
                     result += symbol; // 未定义符号保留原样
                 }
             }
-            document.getElementById('output').textContent = result;
+
+            document.getElementById('output').textContent = detailedResult + '\nResult: ' + result;
         }
     </script>
 </body>
