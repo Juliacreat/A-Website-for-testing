@@ -57,17 +57,15 @@
     </style>
 </head>
 <body>
-    <h1 id="pageTitle">Christmas Symbol Cipher</h1>
-    <p id="description">Enter text (A-Z, 0-9) to encrypt or decrypt using Christmas symbols!</p>
+    <h1>Christmas Symbol Cipher</h1>
+    <p>Enter text (A-Z, 0-9) to encrypt or decrypt using Christmas symbols!</p>
 
-    <h2 id="mappingTitle">Character-to-Symbol Mapping</h2>
+    <h2>Character-to-Symbol Mapping</h2>
     <div class="grid-container" id="mappingGrid"></div>
 
     <input type="text" id="inputText" placeholder="Enter text to encrypt/decrypt">
-    <button onclick="encryptToSymbols()" id="encryptButton">Encrypt to Symbols</button>
-    <button onclick="decryptFromSymbols()" id="decryptButton">Decrypt from Symbols</button>
-    <button onclick="switchLanguage('en')" id="englishButton">English</button>
-    <button onclick="switchLanguage('zh')" id="chineseButton">中文</button>
+    <button onclick="encryptToSymbols()">Encrypt to Symbols</button>
+    <button onclick="decryptFromSymbols()">Decrypt from Symbols</button>
     <div class="output" id="output"></div>
 
     <script>
@@ -88,46 +86,14 @@
             Object.entries(charToSymbol).map(([key, value]) => [value, key])
         );
 
-        // 语言支持
-        const languages = {
-            en: {
-                pageTitle: "Christmas Symbol Cipher",
-                description: "Enter text (A-Z, 0-9) to encrypt or decrypt using Christmas symbols!",
-                mappingTitle: "Character-to-Symbol Mapping",
-                encryptButton: "Encrypt to Symbols",
-                decryptButton: "Decrypt from Symbols"
-            },
-            zh: {
-                pageTitle: "聖誕符號加密器",
-                description: "輸入文字 (A-Z, 0-9) 以聖誕符號進行加密或解密！",
-                mappingTitle: "字符與符號對照表",
-                encryptButton: "加密為符號",
-                decryptButton: "解密為文字"
-            }
-        };
-
-        // 当前语言
-        let currentLanguage = 'en';
-
         // 显示对照表为紧凑网格
         const mappingGrid = document.getElementById('mappingGrid');
         Object.entries(charToSymbol).forEach(([char, symbol]) => {
             const item = document.createElement('div');
             item.className = 'grid-item';
-            item.innerHTML = `<span class="char">${char}</span><span>${symbol}</span>`;
+            item.innerHTML = <span class="char">${char}</span><span>${symbol}</span>;
             mappingGrid.appendChild(item);
         });
-
-        // 切换语言
-        function switchLanguage(lang) {
-            currentLanguage = lang;
-            const langData = languages[lang];
-            document.getElementById('pageTitle').textContent = langData.pageTitle;
-            document.getElementById('description').textContent = langData.description;
-            document.getElementById('mappingTitle').textContent = langData.mappingTitle;
-            document.getElementById('encryptButton').textContent = langData.encryptButton;
-            document.getElementById('decryptButton').textContent = langData.decryptButton;
-        }
 
         // 凯撒加密（符号输出）
         function encryptToSymbols() {
@@ -138,17 +104,17 @@
             for (const char of input) {
                 if (/[A-Z]/.test(char)) {
                     const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 + 1) % 26 + 65); // 下移一个字母
-                    detailedResult += `${char} → ${shiftedChar} → ${charToSymbol[shiftedChar]}\n`;
+                    detailedResult += ${char} → ${shiftedChar} → ${charToSymbol[shiftedChar]}\n;
                     result += charToSymbol[shiftedChar];
                 } else if (/[0-9]/.test(char)) {
                     const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 + 1) % 10 + 48); // 下移一个数字
-                    detailedResult += `${char} → ${shiftedChar} → ${charToSymbol[shiftedChar]}\n`;
+                    detailedResult += ${char} → ${shiftedChar} → ${charToSymbol[shiftedChar]}\n;
                     result += charToSymbol[shiftedChar];
                 } else if (char === ' ') {
-                    detailedResult += `Space → Space → Space\n`;
+                    detailedResult += Space → Space → Space\n;
                     result += ' '; // 保留空白
                 } else {
-                    detailedResult += `${char} → Not Encrypted\n`;
+                    detailedResult += ${char} → Not Encrypted\n;
                     result += char; // 其他字符保留原样
                 }
             }
@@ -169,22 +135,27 @@
                     const char = symbolToChar[symbol];
                     if (/[A-Z]/.test(char)) {
                         const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 - 1 + 26) % 26 + 65); // 上移一个字母
-                        detailedResult += `${symbol} → ${char} → ${shiftedChar}\n`;
+                        detailedResult += ${symbol} → ${char} → ${shiftedChar}\n;
                         result += shiftedChar;
                     } else if (/[0-9]/.test(char)) {
                         const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 - 1 + 10) % 10 + 48); // 上移一个数字
-                        detailedResult += `${symbol} → ${char} → ${shiftedChar}\n`;
+                        detailedResult += ${symbol} → ${char} → ${shiftedChar}\n;
                         result += shiftedChar;
                     } else {
-                        detailedResult += `${symbol} → Not Decrypted\n`;
+                        detailedResult += ${symbol} → Not Decrypted\n;
                         result += char; // 特殊符号直接添加
                     }
                 } else if (symbol === ' ') {
-                    detailedResult += `Space → Space → Space\n`;
+                    detailedResult += Space → Space → Space\n;
                     result += ' '; // 保留空白
                 } else {
-                    detailedResult += `${symbol} → Not Encrypted\n`;
+                    detailedResult += ${symbol} → Not Encrypted\n;
                     result += symbol; // 未定义符号保留原样
                 }
             }
 
+            document.getElementById('output').textContent = detailedResult + '\nResult: ' + result;
+        }
+    </script>
+</body>
+</html>
