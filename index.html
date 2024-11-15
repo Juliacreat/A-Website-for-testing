@@ -83,11 +83,6 @@
             '9': '🐻', ' ': ' ' // 空白直接对映为空白
         };
 
-        // 建立符号反向对照表
-        const symbolToChar = Object.fromEntries(
-            Object.entries(charToSymbol).map(([key, value]) => [value, key])
-        );
-
         // 语言支持
         const languages = {
             en: {
@@ -96,10 +91,7 @@
                 mappingTitle: "Character-to-Symbol Mapping",
                 encryptButton: "Encrypt to Symbols",
                 decryptButton: "Decrypt from Symbols",
-                inputPlaceholder: "Enter text to encrypt/decrypt",
-                encryptionProcess: "Encryption Process",
-                decryptionProcess: "Decryption Process",
-                resultText: "Result"
+                inputPlaceholder: "Enter text to encrypt/decrypt"
             },
             zh: {
                 pageTitle: "聖誕符號加密器",
@@ -107,10 +99,7 @@
                 mappingTitle: "字符與符號對照表",
                 encryptButton: "加密為符號",
                 decryptButton: "解密為文字",
-                inputPlaceholder: "輸入要加密或解密的文字",
-                encryptionProcess: "加密過程",
-                decryptionProcess: "解密過程",
-                resultText: "結果"
+                inputPlaceholder: "輸入要加密或解密的文字"
             }
         };
 
@@ -118,13 +107,17 @@
         let currentLanguage = 'en';
 
         // 显示对照表为紧凑网格
-        const mappingGrid = document.getElementById('mappingGrid');
-        Object.entries(charToSymbol).forEach(([char, symbol]) => {
-            const item = document.createElement('div');
-            item.className = 'grid-item';
-            item.innerHTML = `<span class="char">${char}</span><span>${symbol}</span>`;
-            mappingGrid.appendChild(item);
-        });
+        function displayMapping() {
+            const mappingGrid = document.getElementById('mappingGrid');
+            mappingGrid.innerHTML = ''; // 清空现有内容
+            Object.entries(charToSymbol).forEach(([char, symbol]) => {
+                const item = document.createElement('div');
+                item.className = 'grid-item';
+                item.innerHTML = `<span class="char">${char}</span><span>${symbol}</span>`;
+                mappingGrid.appendChild(item);
+            });
+        }
+        displayMapping(); // 初始显示对照表
 
         // 切换语言
         function switchLanguage(lang) {
@@ -141,46 +134,48 @@
         // 凯撒加密（符号输出）
         function encryptToSymbols() {
             const input = document.getElementById('inputText').value.toUpperCase();
-            const langData = languages[currentLanguage];
             let result = '';
-            let detailedResult = `${langData.encryptionProcess}:\n`;
-
             for (const char of input) {
                 if (/[A-Z]/.test(char)) {
                     const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 + 1) % 26 + 65); // 下移一个字母
-                    detailedResult += `${char} → ${shiftedChar} → ${charToSymbol[shiftedChar]}\n`;
                     result += charToSymbol[shiftedChar];
                 } else if (/[0-9]/.test(char)) {
                     const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 + 1) % 10 + 48); // 下移一个数字
-                    detailedResult += `${char} → ${shiftedChar} → ${charToSymbol[shiftedChar]}\n`;
                     result += charToSymbol[shiftedChar];
                 } else if (char === ' ') {
-                    detailedResult += `Space → Space → Space\n`;
                     result += ' '; // 保留空白
                 } else {
-                    detailedResult += `${char} → Not Encrypted\n`;
                     result += char; // 其他字符保留原样
                 }
             }
-
-            document.getElementById('output').textContent = `${detailedResult}\n${langData.resultText}: ${result}`;
+            document.getElementById('output').textContent = result;
         }
 
         // 解密符号
         function decryptFromSymbols() {
             const input = document.getElementById('inputText').value;
-            const langData = languages[currentLanguage];
             let result = '';
-            let detailedResult = `${langData.decryptionProcess}:\n`;
-
-            // 使用 Array.from 解析符号
-            const symbols = Array.from(input);
+            const symbols = Array.from(input); 
             for (const symbol of symbols) {
                 if (symbolToChar[symbol]) {
                     const char = symbolToChar[symbol];
                     if (/[A-Z]/.test(char)) {
                         const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 65 - 1 + 26) % 26 + 65); // 上移一个字母
-                        detailedResult += `${symbol} → ${char} → ${shiftedChar}\n`;
                         result += shiftedChar;
                     } else if (/[0-9]/.test(char)) {
-                        const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 - 1
+                        const shiftedChar = String.fromCharCode((char.charCodeAt(0) - 48 - 1 + 10) % 10 + 48); // 上移一个数字
+                        result += shiftedChar;
+                    } else {
+                        result += char; // 特殊符号直接添加
+                    }
+                } else if (symbol === ' ') {
+                    result += ' '; // 保留空白
+                } else {
+                    result += symbol; // 未定义符号保留原样
+                }
+            }
+            document.getElementById('output').textContent = result;
+        }
+    </script>
+</body>
+</html>
